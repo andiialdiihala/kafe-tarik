@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { LogOut } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
+import { useSession, signOut } from "@/lib/auth-client";
 
 const nav = [
   { href: "/admin/dashboard", label: "Dashboard", active: true, icon: (
@@ -35,6 +36,7 @@ const nav = [
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const router = useRouter();
+  const { data: sessionData } = useSession();
   const [open, setOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
@@ -44,9 +46,10 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
-  const handleLogout = () => {
-    localStorage.removeItem("admin-auth");
+  const handleLogout = async () => {
+    await signOut();
     router.push("/auth/login");
+    router.refresh();
   };
   return (
     <div className="min-h-screen flex flex-col bg-brand-cream font-sans antialiased text-stone-800">
@@ -118,8 +121,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                     </svg>
                   </div>
                   <div className="flex flex-col text-left">
-                    <span className="text-xs font-semibold text-white leading-tight">Admin</span>
-                    <span className="text-[10px] text-emerald-300/70 font-normal">Administrator</span>
+                    <span className="text-xs font-semibold text-white leading-tight">{sessionData?.user?.name || "Admin"}</span>
+                    <span className="text-[10px] text-emerald-300/70 font-normal">{sessionData?.user?.email || "Administrator"}</span>
                   </div>
                   <svg className={`w-3.5 h-3.5 text-emerald-300/60 ml-1 transition-transform ${open ? "rotate-180" : ""}`} fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
                     <path d="M19 9l-7 7-7-7" strokeLinecap="round" strokeLinejoin="round" />
@@ -129,8 +132,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 {open && (
                   <div className="absolute right-0 top-full mt-2 w-48 bg-white rounded-xl shadow-lg border border-stone-100 py-1.5 z-50">
                     <div className="px-4 py-2 border-b border-stone-100">
-                      <p className="text-xs font-bold text-stone-800">Admin Kafe</p>
-                      <p className="text-[10px] text-stone-400">admin@kafetarik.com</p>
+                      <p className="text-xs font-bold text-stone-800">{sessionData?.user?.name || "Admin Kafe"}</p>
+                      <p className="text-[10px] text-stone-400">{sessionData?.user?.email || "-"}</p>
                     </div>
                     <button
                       onClick={handleLogout}

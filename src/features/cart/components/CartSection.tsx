@@ -128,20 +128,20 @@ export const CartSection = () => {
           animate={{ opacity: 1, y: 0 }}
           className="lg:col-span-5 bg-white p-6 rounded-3xl border border-stone-200 shadow-sm sticky top-24"
         >
-          <h3 className="font-display font-bold text-lg text-stone-900 mb-4">Ringkasan Pesanan</h3>
-          <div className="space-y-3 text-sm pb-4 border-b border-stone-100">
+          <h3 className="font-display font-extrabold text-xl text-stone-900 mb-5">Ringkasan Pesanan</h3>
+          <div className="space-y-3.5 text-[15px] pb-5 border-b border-stone-100">
             <div className="flex justify-between text-stone-600">
-              <span>Total Item</span>
-              <span>{items.reduce((acc, curr) => acc + curr.quantity, 0)} pcs</span>
+              <span className="font-medium">Total Item</span>
+              <span className="font-bold text-stone-900">{items.reduce((acc, curr) => acc + curr.quantity, 0)} pcs</span>
             </div>
             <div className="flex justify-between text-stone-600">
-              <span>Subtotal</span>
-              <span>Rp {subtotal.toLocaleString("id-ID")}</span>
+              <span className="font-medium">Subtotal</span>
+              <span className="font-bold text-stone-900">Rp {subtotal.toLocaleString("id-ID")}</span>
             </div>
           </div>
-          <div className="flex justify-between items-center py-4 text-base font-bold text-stone-900">
-            <span>Total Pembayaran</span>
-            <span className="text-brand-dark text-xl font-display">
+          <div className="flex justify-between items-center py-5 text-lg font-bold text-stone-900">
+            <span className="font-display tracking-tight">Total Pembayaran</span>
+            <span className="text-brand-dark text-2xl font-extrabold font-display">
               Rp {total.toLocaleString("id-ID")}
             </span>
           </div>

@@ -2,18 +2,29 @@
 
 import { useState } from "react";
 import { Calendar, TrendingUp, Wallet, ShoppingBag, Users, Download } from "lucide-react";
+import {
+  AreaChart,
+  Area,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+} from "recharts";
 
 const periods = ["7 Hari", "30 Hari", "Bulan Ini", "Tahun Ini"] as const;
 
-const stats = [
-  { label: "Total Pendapatan", value: "Rp 8.420.000", sub: "Periode ini", icon: Wallet, bg: "bg-emerald-50", color: "text-emerald-600" },
-  { label: "Total Pesanan", value: "342", sub: "↑ 12% vs periode lalu", icon: ShoppingBag, bg: "bg-blue-50", color: "text-blue-600" },
-  { label: "Rata-rata / Hari", value: "Rp 1.202.000", sub: "7 hari terakhir", icon: TrendingUp, bg: "bg-amber-50", color: "text-amber-600" },
-  { label: "Pelanggan Baru", value: "58", sub: "↑ 8% vs periode lalu", icon: Users, bg: "bg-violet-50", color: "text-violet-600" },
-];
-
-export const ReportsView = () => {
+export const ReportsView = ({ data }: { data: any }) => {
   const [period, setPeriod] = useState<(typeof periods)[number]>("7 Hari");
+
+  const chartData = data.dailyRevenue;
+
+  const stats = [
+    { label: "Total Pendapatan", value: `Rp ${Number(data.revenue.total).toLocaleString()}`, sub: `${data.revenue.change >= 0 ? '↑' : '↓'} ${Math.abs(data.revenue.change).toFixed(1)}% vs periode lalu`, icon: Wallet, bg: "bg-emerald-50", color: "text-emerald-600" },
+    { label: "Total Pesanan", value: data.orders.total.toString(), sub: `${data.orders.change >= 0 ? '↑' : '↓'} ${Math.abs(data.orders.change).toFixed(1)}% vs periode lalu`, icon: ShoppingBag, bg: "bg-blue-50", color: "text-blue-600" },
+    { label: "Total Menu Terjual", value: data.sold.total.toString(), sub: `${data.sold.change >= 0 ? '↑' : '↓'} ${Math.abs(data.sold.change).toFixed(1)}% vs periode lalu`, icon: TrendingUp, bg: "bg-amber-50", color: "text-amber-600" },
+    { label: "Pelanggan Baru", value: data.customers.total.toString(), sub: `${data.customers.change >= 0 ? '↑' : '↓'} ${Math.abs(data.customers.change).toFixed(1)}% vs periode lalu`, icon: Users, bg: "bg-violet-50", color: "text-violet-600" },
+  ];
 
   return (
     <div className="space-y-6">
@@ -61,25 +72,29 @@ export const ReportsView = () => {
             <h3 className="text-sm font-bold text-stone-800">Grafik Pendapatan — {period}</h3>
             <span className="text-[11px] text-stone-400 flex items-center gap-1"><Calendar className="w-3 h-3" /> {period}</span>
           </div>
-          <div className="h-64 w-full bg-stone-50 rounded-2xl border-2 border-dashed border-stone-100 flex items-center justify-center text-stone-400 text-xs">
-            [Grafik — {period}]
-          </div>
+          <ResponsiveContainer width="100%" height={250}>
+            <AreaChart data={chartData}>
+              <CartesianGrid strokeDasharray="3 3" stroke="#eee" />
+              <XAxis dataKey="name" />
+              <YAxis />
+              <Tooltip formatter={(value: any) => [`Rp ${Number(value).toLocaleString()}`, "Pendapatan"]} />
+              <Area type="monotone" dataKey="total" name="Pendapatan" stroke="#143125" fill="#d6f5d6" />
+            </AreaChart>
+          </ResponsiveContainer>
         </div>
         <div className="bg-white rounded-xl p-6 border border-stone-200/70 shadow-xs">
           <h3 className="text-sm font-bold text-stone-800 mb-4">Ringkasan Metode</h3>
           <div className="space-y-3">
-            <div className="flex justify-between items-center p-3 rounded-xl bg-cyan-50 border border-cyan-100">
-              <span className="text-xs font-semibold text-cyan-700">QRIS</span>
-              <span className="text-xs font-bold text-stone-900">Rp 5.120.000 · 62%</span>
-            </div>
-            <div className="flex justify-between items-center p-3 rounded-xl bg-stone-100 border border-stone-200">
-              <span className="text-xs font-semibold text-stone-700">Cash</span>
-              <span className="text-xs font-bold text-stone-900">Rp 3.300.000 · 38%</span>
-            </div>
+            {data.paymentMethods.map((pm: any) => (
+              <div key={pm.method} className={`flex justify-between items-center p-3 rounded-xl border ${pm.method === 'QRIS' ? 'bg-cyan-50 border-cyan-100' : 'bg-stone-100 border-stone-200'}`}>
+                <span className={`text-xs font-semibold ${pm.method === 'QRIS' ? 'text-cyan-700' : 'text-stone-700'}`}>{pm.method}</span>
+                <span className="text-xs font-bold text-stone-900">Rp {pm.total.toLocaleString()} · {pm.percentage.toFixed(0)}%</span>
+              </div>
+            ))}
           </div>
           <div className="mt-6 p-4 rounded-xl bg-[#143125] text-white">
             <p className="text-[11px] text-emerald-300/80 font-semibold uppercase tracking-wider">Periode {period}</p>
-            <p className="text-sm font-bold mt-1">Performa stabil, naik 12% vs periode lalu.</p>
+            <p className="text-sm font-bold mt-1">Performa stabil, naik {Math.abs(data.revenue.change).toFixed(1)}% vs periode lalu.</p>
           </div>
         </div>
       </div>

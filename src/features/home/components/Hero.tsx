@@ -20,7 +20,7 @@ export const Hero = () => (
           </span>
         </div>
         <h1 className="font-display text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-white leading-tight">
-          Rasa Nikmat <br />Tanpa Antre
+          Rasa Nikmat <br />Tanpa Antri
         </h1>
         <p className="text-stone-300 text-base sm:text-lg max-w-xl leading-relaxed">
           Sekarang pesan kopi favoritmu lebih mudah! Scan barcode di meja, pilih menu, bayar, dan tunggu pesananmu tanpa perlu antre di kasir.

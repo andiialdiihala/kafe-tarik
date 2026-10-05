@@ -1,4 +1,5 @@
 import "./globals.css";
+import { Toaster } from "sonner";
 
 export default function RootLayout({
   children,
@@ -14,6 +15,7 @@ export default function RootLayout({
       </head>
       <body className="bg-brand-cream text-stone-800 font-sans antialiased overflow-x-hidden">
         {children}
+        <Toaster position="top-center" richColors closeButton />
       </body>
     </html>
   );

@@ -2,23 +2,27 @@
 
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { MenuItem } from "@/features/menu/data/menu.data";
 import { useCartStore } from "@/features/cart/store/cart.store";
 import { useToast } from "@/components/ui/Toast";
 import { Container } from "@/components/ui/Container";
 import { ArrowLeft, ShoppingCart } from "lucide-react";
 import Link from "next/link";
 
-export const ProductDetailView = ({ item }: { item: MenuItem }) => {
-  const isDrink = item.category === "Kopi" || item.category === "Non-Kopi";
+const DEFAULT_IMAGE = "https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=500&q=80";
+
+export const ProductDetailView = ({ item }: { item: any }) => {
+  const cat = item.category?.toLowerCase() || "";
+  const isDrink = cat.includes("kopi") || cat.includes("minuman") || cat.includes("drink");
   const [cupSize, setCupSize] = useState<"Regular" | "Large">("Regular");
   
   const addItem = useCartStore((state) => state.addItem);
   const clearCart = useCartStore((state) => state.clearCart);
   const { showToast } = useToast();
 
+  const itemPrice = Number(item.price || 0);
   const extraPrice = isDrink && cupSize === "Large" ? 3000 : 0;
-  const finalPrice = item.price + extraPrice;
+  const finalPrice = itemPrice + extraPrice;
+  const imageUrl = item.image || DEFAULT_IMAGE;
 
   return (
     <main className="min-h-screen bg-brand-cream py-12">
@@ -31,9 +35,16 @@ export const ProductDetailView = ({ item }: { item: MenuItem }) => {
           <motion.div 
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
-            className="aspect-square bg-brand-dark rounded-3xl overflow-hidden shadow-2xl"
+            className="relative aspect-square bg-brand-dark rounded-3xl overflow-hidden shadow-2xl"
           >
-            <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
+            <img
+              src={imageUrl}
+              alt={item.name}
+              className="w-full h-full object-cover bg-stone-100"
+              onError={(e) => {
+                (e.target as HTMLImageElement).src = DEFAULT_IMAGE;
+              }}
+            />
           </motion.div>
 
           <motion.div 
@@ -41,11 +52,11 @@ export const ProductDetailView = ({ item }: { item: MenuItem }) => {
             animate={{ opacity: 1, x: 0 }}
             className="space-y-6"
           >
-            <span className="text-xs font-bold tracking-widest text-brand-mint uppercase bg-brand-dark px-3 py-1 rounded-full">
-              {item.category}
+            <span className="text-xs font-bold tracking-widest text-brand-mint uppercase bg-brand-dark px-3 py-1 rounded-full capitalize">
+              {item.category || "Lainnya"}
             </span>
             <h1 className="font-display text-4xl sm:text-5xl font-bold text-brand-dark">{item.name}</h1>
-            <p className="text-stone-600 text-lg leading-relaxed">{item.description}</p>
+            <p className="text-stone-600 text-lg leading-relaxed">{item.description || "Tidak ada deskripsi."}</p>
             
             {/* Opsi Pilihan Cup Size untuk Minuman */}
             {isDrink && (

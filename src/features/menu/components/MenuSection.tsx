@@ -1,26 +1,41 @@
 "use client";
 
 import { useState } from "react";
-import { menuList, menuCategories } from "../data/menu.data";
+import { menuList, menuCategories as staticCategories } from "../data/menu.data";
 import { MenuCard } from "./MenuCard";
 import { motion, AnimatePresence } from "framer-motion";
 
-export const MenuSection = () => {
+interface MenuSectionProps {
+  initialMenu?: any[];
+  initialCategories?: any[];
+}
+
+export const MenuSection = ({ initialMenu = [], initialCategories = [] }: MenuSectionProps) => {
+  // Use DB menu if present, otherwise fallback to sample data
+  const hasDbItems = initialMenu.length > 0;
+  const itemsToDisplay = hasDbItems ? initialMenu : menuList;
+  
+  const categoryNames = hasDbItems && initialCategories.length > 0
+    ? ["Semua", ...initialCategories.map((c: any) => c.name)]
+    : Array.from(staticCategories);
+
   const [activeCategory, setActiveCategory] = useState<string>("Semua");
   const [search, setSearch] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 8;
 
-  const filtered = menuList.filter((item) => {
-    const matchCategory = activeCategory === "Semua" || item.category === activeCategory;
-    const matchSearch = item.name.toLowerCase().includes(search.toLowerCase());
+  const filtered = itemsToDisplay.filter((item) => {
+    const matchCategory =
+      activeCategory === "Semua" ||
+      (item.category && item.category.toLowerCase() === activeCategory.toLowerCase());
+    const matchSearch = item.name.toLowerCase().includes(search.toLowerCase()) ||
+      (item.description && item.description.toLowerCase().includes(search.toLowerCase()));
     return matchCategory && matchSearch;
   });
 
   const totalPages = Math.ceil(filtered.length / itemsPerPage);
   const paginatedItems = filtered.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
 
-  // Reset page on filter change
   const handleCategoryChange = (cat: string) => {
     setActiveCategory(cat);
     setCurrentPage(1);
@@ -32,9 +47,6 @@ export const MenuSection = () => {
     if (currentPage >= totalPages - 1) return [1, "...", totalPages - 1, totalPages];
     return [1, "...", currentPage, totalPages];
   };
-  
-  // Update filter logic to use handleCategoryChange
-  // ... (inside JSX, change onClick to handleCategoryChange)
 
   return (
     <section className="py-10 md:py-16 px-5 md:px-6 max-w-7xl mx-auto" id="menu-list">
@@ -74,12 +86,12 @@ export const MenuSection = () => {
         transition={{ duration: 0.5, delay: 0.1 }}
         className="flex flex-wrap items-center justify-center gap-2 md:gap-3 mb-8 md:mb-10"
       >
-        {menuCategories.map((cat) => (
+        {categoryNames.map((cat: string) => (
           <button
             key={cat}
             onClick={() => handleCategoryChange(cat)}
-            className={`px-5 md:px-6 py-2 md:py-2.5 rounded-full text-xs md:text-sm font-semibold transition-all border ${
-              activeCategory === cat
+            className={`px-5 md:px-6 py-2 md:py-2.5 rounded-full text-xs md:text-sm font-semibold transition-all border capitalize ${
+              activeCategory.toLowerCase() === cat.toLowerCase()
                 ? "bg-brand-dark text-white border-brand-dark shadow-lg scale-105"
                 : "bg-white text-stone-600 border-stone-200 hover:border-brand-dark hover:text-brand-dark"
             }`}

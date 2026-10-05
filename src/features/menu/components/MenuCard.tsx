@@ -1,13 +1,21 @@
 "use client";
 
-import { MenuItem } from "../data/menu.data";
 import { useCartStore } from "@/features/cart/store/cart.store";
 import { useToast } from "@/components/ui/Toast";
 import Link from "next/link";
 
-export const MenuCard = ({ item }: { item: MenuItem }) => {
+const DEFAULT_IMAGE = "https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=500&q=80";
+
+export const MenuCard = ({ item }: { item: any }) => {
   const addItem = useCartStore((state) => state.addItem);
   const { showToast } = useToast();
+
+  const isDrink =
+    item.category?.toLowerCase().includes("kopi") ||
+    item.category?.toLowerCase().includes("minuman") ||
+    item.category?.toLowerCase().includes("drink");
+
+  const imageUrl = item.image || DEFAULT_IMAGE;
 
   return (
     <div className="bg-white rounded-2xl p-3.5 shadow-sm hover:shadow-xl border border-stone-200/80 flex flex-col justify-between group transition hover:-translate-y-1">
@@ -17,21 +25,28 @@ export const MenuCard = ({ item }: { item: MenuItem }) => {
             👑 Best Seller
           </span>
         )}
-        <img alt={item.name} src={item.image} className="w-full h-full object-cover group-hover:scale-105 transition duration-300" />
+        <img
+          alt={item.name}
+          src={imageUrl}
+          className="w-full h-full object-cover group-hover:scale-105 transition duration-300 bg-stone-100"
+          onError={(e) => {
+            (e.target as HTMLImageElement).src = DEFAULT_IMAGE;
+          }}
+        />
       </Link>
       <div className="space-y-1">
-        <span className="text-[10px] font-bold tracking-widest text-brand-sage uppercase">{item.category}</span>
+        <span className="text-[10px] font-bold tracking-widest text-brand-sage uppercase">{item.category || "Lainnya"}</span>
         <Link href={`/menu/${item.id}`}>
           <h3 className="font-display font-semibold text-stone-900 text-[15px] leading-tight line-clamp-1 hover:text-brand-accent transition">{item.name}</h3>
         </Link>
-        <p className="text-[12px] text-stone-500 leading-snug line-clamp-2 min-h-[32px]">{item.description}</p>
+        <p className="text-[12px] text-stone-500 leading-snug line-clamp-2 min-h-[32px]">{item.description || "-"}</p>
         <div className="pt-2 flex items-center justify-between">
-          <span className="text-sm font-bold text-brand-dark">Rp {item.price.toLocaleString("id-ID")}</span>
+          <span className="text-sm font-bold text-brand-dark">Rp {Number(item.price || 0).toLocaleString("id-ID")}</span>
           <button 
             onClick={() => {
-              const isDrink = item.category === "Kopi" || item.category === "Non-Kopi";
               const productToAdd = {
                 ...item,
+                price: Number(item.price || 0),
                 name: isDrink ? `${item.name} (Regular)` : item.name,
               };
               addItem(productToAdd);
@@ -49,4 +64,3 @@ export const MenuCard = ({ item }: { item: MenuItem }) => {
     </div>
   );
 };
-
