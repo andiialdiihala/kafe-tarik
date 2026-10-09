@@ -1,5 +1,6 @@
 import "./globals.css";
 import { Toaster } from "sonner";
+import { Providers } from "@/components/providers";
 
 export default function RootLayout({
   children,
@@ -14,8 +15,10 @@ export default function RootLayout({
         <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Fredoka:wght@500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
       </head>
       <body className="bg-brand-cream text-stone-800 font-sans antialiased overflow-x-hidden">
-        {children}
-        <Toaster position="top-center" richColors closeButton />
+        <Providers>
+          {children}
+          <Toaster position="top-center" richColors closeButton />
+        </Providers>
       </body>
     </html>
   );

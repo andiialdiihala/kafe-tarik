@@ -69,7 +69,7 @@ export const PembayaranView = () => {
     };
 
     fetchStatus();
-    interval = setInterval(fetchStatus, 3500);
+    interval = setInterval(fetchStatus, 10000);
 
     return () => {
       isMounted = false;

@@ -26,6 +26,34 @@ export const ReportsView = ({ data }: { data: any }) => {
     { label: "Pelanggan Baru", value: data.customers.total.toString(), sub: `${data.customers.change >= 0 ? '↑' : '↓'} ${Math.abs(data.customers.change).toFixed(1)}% vs periode lalu`, icon: Users, bg: "bg-violet-50", color: "text-violet-600" },
   ];
 
+  const handleExport = () => {
+    const esc = (v: any) => `"${String(v ?? "").replace(/"/g, '""')}"`;
+    const rows: string[][] = [];
+    rows.push(["Kafe Tarik - Laporan Penjualan"]);
+    rows.push(["Periode", period]);
+    rows.push(["Tanggal Export", new Date().toLocaleString("id-ID", { dateStyle: "long", timeStyle: "short" })]);
+    rows.push([]);
+    rows.push(["RINGKASAN"]);
+    rows.push(["Label", "Nilai", "Perubahan vs Periode Lalu"]);
+    stats.forEach((s) => rows.push([s.label, s.value, s.sub]));
+    rows.push([]);
+    rows.push(["PENDAPATAN HARIAN"]);
+    rows.push(["Hari", "Pendapatan (Rp)"]);
+    chartData.forEach((d: any) => rows.push([d.name, d.total]));
+    rows.push([]);
+    rows.push(["RINGKASAN METODE PEMBAYARAN"]);
+    rows.push(["Metode", "Total (Rp)", "Persentase"]);
+    data.paymentMethods.forEach((pm: any) => rows.push([pm.method, pm.total, `${pm.percentage.toFixed(2)}%`]));
+    const csv = "\uFEFF" + rows.map((r) => (r.length === 0 ? "" : r.map(esc).join(","))).join("\n");
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `laporan-kafe-tarik_${period.toLowerCase().replace(/\s+/g, "_")}_${new Date().toISOString().slice(0, 10)}.csv`;
+    link.click();
+    URL.revokeObjectURL(url);
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
@@ -45,7 +73,7 @@ export const ReportsView = ({ data }: { data: any }) => {
               </button>
             ))}
           </div>
-          <button className="bg-white border border-stone-200 flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-semibold text-stone-700 hover:bg-stone-50">
+          <button onClick={handleExport} className="bg-white border border-stone-200 flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-semibold text-stone-700 hover:bg-stone-50">
             <Download className="w-3.5 h-3.5" /> Export
           </button>
         </div>
@@ -98,6 +126,30 @@ export const ReportsView = ({ data }: { data: any }) => {
           </div>
         </div>
       </div>
+
+      {/* Tabel Preview */}
+      <div className="bg-white rounded-xl border border-stone-200/70 shadow-xs overflow-hidden">
+        <div className="p-4 border-b border-stone-100 font-bold text-sm">Preview Data Laporan</div>
+        <div className="overflow-x-auto">
+          <table className="w-full text-xs text-left">
+            <thead className="bg-stone-50">
+              <tr>
+                <th className="p-3">Kategori</th>
+                <th className="p-3">Data</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-stone-100">
+              {stats.map((s) => (
+                <tr key={s.label}>
+                  <td className="p-3 font-medium text-stone-600">{s.label}</td>
+                  <td className="p-3 font-bold text-stone-900">{s.value}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
     </div>
   );
 };

@@ -1,5 +1,5 @@
 import { MenuSection } from "@/features/menu/components/MenuSection";
-import { getPublicMenu, getPublicCategories } from "@/features/menu/actions";
+import { getPublicMenu, getPublicCategories } from "@/features/menu/actions/menu.actions";
 
 export const revalidate = 0;
 

@@ -1,7 +1,7 @@
 "use server";
 
 import { db } from "@/db";
-import { products } from "@/db/schema";
+import { products, orderItems } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import fs from "fs";
@@ -38,7 +38,7 @@ async function saveUploadedFile(file?: File | null): Promise<string | null> {
 export async function addProduct(formData: FormData) {
   const name = formData.get("name") as string;
   const price = Number(formData.get("price"));
-  const description = formData.get("description") as string;
+  const description = (formData.get("description") as string)?.trim() || null;
   const idCategory = formData.get("idCategory") as string;
   const stock = Number(formData.get("stock"));
   const imageUrlInput = (formData.get("imageUrl") as string)?.trim();
@@ -55,7 +55,7 @@ export async function addProduct(formData: FormData) {
     idProducts: `PRD-${Date.now()}`,
     name,
     price: price.toString() as any,
-    description,
+    description: description || null,
     idCategory,
     stock,
     imageUrl,
@@ -96,6 +96,7 @@ export async function updateProduct(id: string, formData: FormData) {
 }
 
 export async function deleteProduct(id: string) {
+  await db.delete(orderItems).where(eq(orderItems.idProducts, id));
   await db.delete(products).where(eq(products.idProducts, id));
   revalidatePath("/admin/menu");
   revalidatePath("/menu");

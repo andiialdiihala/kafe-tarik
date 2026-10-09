@@ -8,6 +8,13 @@
       "when": 1791036696612,
       "tag": "0000_right_joseph",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1791448485325,
+      "tag": "0001_normal_vindicator",
+      "breakpoints": true
     }
   ]
 }

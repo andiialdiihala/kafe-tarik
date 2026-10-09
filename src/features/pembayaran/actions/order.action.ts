@@ -2,8 +2,20 @@
 
 import { db } from "@/db";
 import { orders, orderItems, payments, customers, products } from "@/db/schema";
-import { eq, desc } from "drizzle-orm";
+import { eq, desc, sql } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
+
+// Custom type for push notification trigger
+// We use a simple helper here to simulate a browser notification
+// Note: In real production, this would be a real Pusher/Firebase/WebPush implementation
+// We'll add a helper that can be called by admin actions to notify
+export async function notifyCustomer(orderId: string, message: string) {
+  // Logic: In a real app, this would be a websocket event
+  // For now, we update a status or add a notification log
+  console.log(`[Notification] Order ${orderId}: ${message}`);
+  // We'll rely on the existing status field which client polls
+}
+
 
 export async function saveOrder(data: {
   tableNumber?: number;
@@ -28,6 +40,14 @@ export async function saveOrder(data: {
         name: (data.customerName || "Pelanggan").slice(0, 100),
         phone: (data.customerPhone && data.customerPhone.trim() !== "") ? data.customerPhone.slice(0, 12) : null,
       });
+    }
+
+    for (const item of data.items) {
+      if (!item.productId) continue;
+      const [prod] = await db.select({ stock: products.stock, name: products.name }).from(products).where(eq(products.idProducts, item.productId.slice(0, 20))).limit(1);
+      if (prod && prod.stock !== null && prod.stock < item.quantity) {
+        return { success: false, error: `Stok ${prod.name} tidak cukup (sisa ${prod.stock})` };
+      }
     }
 
     const initialStatus = data.paymentMethod === "CASH" ? "Menunggu Pembayaran" : "Menunggu Verifikasi";
@@ -66,6 +86,10 @@ export async function saveOrder(data: {
         price: item.price.toString(),
         subtotal: item.subtotal.toString(),
       });
+
+      if (validProdId) {
+        await db.update(products).set({ stock: sql`GREATEST(COALESCE(${products.stock}, 0) - ${item.quantity}, 0)` }).where(eq(products.idProducts, validProdId));
+      }
     }
 
     // Create payment record (idPay max length 20: "PAY-1728059000000" = 17 chars)

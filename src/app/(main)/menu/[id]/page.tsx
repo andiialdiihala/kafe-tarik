@@ -1,25 +1,12 @@
 import { notFound } from "next/navigation";
-import { getProductById } from "@/features/menu/actions";
-import { menuList } from "@/features/menu/data/menu.data";
+import { getProductById } from "@/features/menu/actions/menu.actions";
 import { ProductDetailView } from "@/features/menu-detail/components/ProductDetailView";
 
 export const revalidate = 0;
 
 export default async function ProductDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  
-  let item: any = await getProductById(id);
-
-  if (!item) {
-    const staticItem = menuList.find((i) => i.id === id);
-    if (staticItem) {
-      item = {
-        ...staticItem,
-        idCategory: null,
-        stock: null,
-      };
-    }
-  }
+  const item: any = await getProductById(id);
 
   if (!item) {
     notFound();

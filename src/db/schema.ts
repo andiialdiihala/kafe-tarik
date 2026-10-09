@@ -79,6 +79,15 @@ export const verification = pgTable("verification", {
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });
 
+export const invitations = pgTable("invitations", {
+  id: varchar("id", { length: 36 }).primaryKey(),
+  email: varchar("email", { length: 255 }).notNull(),
+  token: varchar("token", { length: 255 }).notNull().unique(),
+  role: userRoleEnum("role").default("kasir"),
+  expiresAt: timestamp("expires_at").notNull(),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
 /* =====================================================
    CUSTOMERS
 ===================================================== */
@@ -162,7 +171,7 @@ export const products = pgTable("products", {
   }).references(() => categories.idCategories),
 
   name: varchar("name", {
-    length: 20,
+    length: 100,
   }),
 
   description: text("description"),

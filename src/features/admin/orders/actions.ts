@@ -6,19 +6,24 @@ import { desc, eq, count } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 
 export async function getOrders() {
-  const data = await db
-    .select({
-      id: orders.idOrder,
-      date: orders.createdAt,
-      customer: customers.name,
-      total: orders.totalAmount,
-      status: orders.status,
-    })
-    .from(orders)
-    .leftJoin(customers, eq(orders.idCustomer, customers.idCustomers))
-    .orderBy(desc(orders.createdAt));
+  try {
+    const data = await db
+      .select({
+        id: orders.idOrder,
+        date: orders.createdAt,
+        customer: customers.name,
+        total: orders.totalAmount,
+        status: orders.status,
+      })
+      .from(orders)
+      .leftJoin(customers, eq(orders.idCustomer, customers.idCustomers))
+      .orderBy(desc(orders.createdAt));
 
-  return data;
+    return data;
+  } catch (error) {
+    console.error("Error fetching orders:", error);
+    return [];
+  }
 }
 
 export async function updateOrderStatus(idOrder: string, status: string) {
@@ -26,9 +31,16 @@ export async function updateOrderStatus(idOrder: string, status: string) {
     .update(orders)
     .set({ status: status.slice(0, 20) })
     .where(eq(orders.idOrder, idOrder));
+  
+  // Also update payment status if necessary for consistency
+  await db
+    .update(payments)
+    .set({ status: status.slice(0, 20) })
+    .where(eq(payments.idOrder, idOrder));
 
   revalidatePath("/admin/orders");
   revalidatePath("/admin/payments");
+  revalidatePath("/pembayaran");
   return { success: true };
 }
 

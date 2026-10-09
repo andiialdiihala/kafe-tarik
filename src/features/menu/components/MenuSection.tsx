@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { menuList, menuCategories as staticCategories } from "../data/menu.data";
 import { MenuCard } from "./MenuCard";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -11,20 +10,16 @@ interface MenuSectionProps {
 }
 
 export const MenuSection = ({ initialMenu = [], initialCategories = [] }: MenuSectionProps) => {
-  // Use DB menu if present, otherwise fallback to sample data
-  const hasDbItems = initialMenu.length > 0;
-  const itemsToDisplay = hasDbItems ? initialMenu : menuList;
-  
-  const categoryNames = hasDbItems && initialCategories.length > 0
-    ? ["Semua", ...initialCategories.map((c: any) => c.name)]
-    : Array.from(staticCategories);
-
   const [activeCategory, setActiveCategory] = useState<string>("Semua");
   const [search, setSearch] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 8;
 
-  const filtered = itemsToDisplay.filter((item) => {
+  const categoryNames = initialCategories.length > 0
+    ? ["Semua", ...initialCategories.map((c: any) => c.name)]
+    : ["Semua"];
+
+  const filtered = initialMenu.filter((item) => {
     const matchCategory =
       activeCategory === "Semua" ||
       (item.category && item.category.toLowerCase() === activeCategory.toLowerCase());
@@ -53,7 +48,6 @@ export const MenuSection = ({ initialMenu = [], initialCategories = [] }: MenuSe
       <motion.div 
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
         className="text-center max-w-2xl mx-auto mb-10"
       >
         <span className="text-xs font-bold tracking-widest text-brand-dark uppercase bg-brand-mint/20 px-4 py-1.5 rounded-full border border-brand-mint/30">
@@ -63,7 +57,7 @@ export const MenuSection = ({ initialMenu = [], initialCategories = [] }: MenuSe
           Pilih Favoritmu, <span className="text-brand-dark">Pesan Sekarang</span>
         </h1>
         <p className="text-stone-500 text-sm sm:text-base mt-3 leading-relaxed">
-          Semua menu dibuat dari bahan pilihan dengan racikan otentik. Tinggal klik tombol + untuk masuk keranjang.
+          Semua menu dibuat dari bahan pilihan dengan racikan otentik.
         </p>
 
         <div className="relative mt-6 max-w-md mx-auto">
@@ -83,7 +77,6 @@ export const MenuSection = ({ initialMenu = [], initialCategories = [] }: MenuSe
       <motion.div 
         initial={{ opacity: 0, y: 15 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, delay: 0.1 }}
         className="flex flex-wrap items-center justify-center gap-2 md:gap-3 mb-8 md:mb-10"
       >
         {categoryNames.map((cat: string) => (
@@ -103,10 +96,7 @@ export const MenuSection = ({ initialMenu = [], initialCategories = [] }: MenuSe
 
       {filtered.length > 0 ? (
         <>
-          <motion.div 
-            layout
-            className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-5"
-          >
+          <motion.div layout className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-5">
             <AnimatePresence>
               {paginatedItems.map((item) => (
                 <motion.div
@@ -160,11 +150,7 @@ export const MenuSection = ({ initialMenu = [], initialCategories = [] }: MenuSe
           )}
         </>
       ) : (
-        <motion.div 
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          className="text-center py-16 bg-white rounded-3xl border border-dashed border-stone-300"
-        >
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-center py-16 bg-white rounded-3xl border border-dashed border-stone-300">
           <div className="text-4xl mb-3">🔍</div>
           <p className="font-display font-semibold text-stone-800">Menu tidak ditemukan</p>
           <p className="text-sm text-stone-500 mt-1">Coba kata kunci atau kategori lain ya.</p>
