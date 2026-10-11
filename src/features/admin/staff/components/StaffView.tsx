@@ -1,20 +1,26 @@
 "use client";
 import { useState, useEffect } from "react";
 import { Search, Plus, Edit2, Trash2, X } from "lucide-react";
-import { inviteStaff, getStaff, deleteStaff, updateStaff } from "../actions";
+import { inviteStaff, deleteStaff, updateStaff } from "../actions/staff.actions";
+import { getStaff } from "../queries/staff.queries";
+import { Staff, StaffRole } from "../types/staff.types";
 import { toast } from "sonner";
 
 export const StaffView = () => {
-  const [staff, setStaff] = useState<any[]>([]);
+  const [staff, setStaff] = useState<Staff[]>([]);
   const [q, setQ] = useState("");
   const [showModal, setShowModal] = useState(false);
   const [showEdit, setShowEdit] = useState(false);
   const [email, setEmail] = useState("");
-  const [role, setRole] = useState<"kasir" | "admin">("kasir");
-  const [edit, setEdit] = useState<any>(null);
+  const [role, setRole] = useState<StaffRole>("kasir");
+  const [edit, setEdit] = useState<Staff | null>(null);
   const [loading, setLoading] = useState(false);
 
-  const refresh = () => getStaff().then(setStaff);
+  const refresh = async () => {
+    const data = await getStaff();
+    setStaff(data);
+  };
+
   useEffect(() => { refresh(); }, []);
 
   const handleInvite = async () => {
@@ -26,8 +32,8 @@ export const StaffView = () => {
       setShowModal(false);
       setEmail("");
       refresh();
-    } catch (e: any) {
-      toast.error(e.message);
+    } catch (e: unknown) {
+      toast.error(e instanceof Error ? e.message : "Gagal mengundang");
     } finally { setLoading(false); }
   };
 
@@ -38,7 +44,7 @@ export const StaffView = () => {
     refresh();
   };
 
-  const openEdit = (s: any) => {
+  const openEdit = (s: Staff) => {
     setEdit(s);
     setShowEdit(true);
   };
@@ -47,16 +53,17 @@ export const StaffView = () => {
     if (!edit) return;
     setLoading(true);
     try {
-      await updateStaff(edit.id, { name: edit.name, role: edit.role });
+      await updateStaff(edit.id, { name: edit.name ?? "", role: edit.role ?? "kasir" });
       toast.success("Staf diperbarui");
       setShowEdit(false);
       refresh();
-    } catch (e: any) {
-      toast.error(e.message);
+    } catch (e: unknown) {
+      toast.error(e instanceof Error ? e.message : "Gagal memperbarui");
     } finally { setLoading(false); }
   };
 
   const filtered = staff.filter(s => s.name?.toLowerCase().includes(q.toLowerCase()) || s.email?.toLowerCase().includes(q.toLowerCase()));
+
 
   return (
     <div className="space-y-6">
@@ -110,11 +117,18 @@ export const StaffView = () => {
       )}
 
       <div className="bg-white rounded-xl border border-stone-200/70 overflow-hidden">
-        <div className="p-4 flex justify-between border-b border-stone-100">
-          <h2 className="text-sm font-bold">Daftar Staf</h2>
-          <div className="relative w-72">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-stone-400" />
-            <input value={q} onChange={e => setQ(e.target.value)} placeholder="Cari staf..." className="w-full pl-9 pr-3 py-2 rounded-xl border border-stone-200 bg-stone-50 text-xs focus:outline-none focus:ring-2 focus:ring-[#143125]/10" />
+        <div className="p-4 flex items-center justify-between gap-4 border-b border-stone-100">
+          <h2 className="text-sm font-bold text-stone-800 shrink-0">Daftar Staf</h2>
+          <div className="relative w-48 sm:w-64 md:w-72 shrink-0">
+            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-stone-400">
+              <Search className="w-4 h-4" />
+            </div>
+            <input
+              value={q}
+              onChange={(e) => setQ(e.target.value)}
+              placeholder="Cari staf..."
+              className="w-full pl-9 pr-3 py-2 h-9 rounded-xl border border-stone-200 bg-stone-50 text-xs placeholder:text-stone-400 focus:outline-none focus:ring-2 focus:ring-[#143125]/10 focus:border-[#143125]/20 focus:bg-white transition"
+            />
           </div>
         </div>
         <div className="overflow-x-auto">

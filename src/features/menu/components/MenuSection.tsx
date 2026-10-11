@@ -61,6 +61,11 @@ export const MenuSection = ({ initialMenu = [], initialCategories = [] }: MenuSe
         </p>
 
         <div className="relative mt-6 max-w-md mx-auto">
+          <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-stone-400">
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+          </div>
           <input
             value={search}
             onChange={(e) => setSearch(e.target.value)}
@@ -68,9 +73,6 @@ export const MenuSection = ({ initialMenu = [], initialCategories = [] }: MenuSe
             placeholder="Cari kopi tarik, pisang goreng..."
             className="w-full pl-11 pr-4 py-3.5 rounded-full border border-stone-200 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-brand-dark shadow-sm"
           />
-          <svg className="w-5 h-5 absolute left-4 top-1/2 -translate-y-1/2 text-stone-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-          </svg>
         </div>
       </motion.div>
 

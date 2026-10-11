@@ -75,7 +75,7 @@ export const CartSection = () => {
                 className="bg-white p-4 rounded-2xl border border-stone-200/80 shadow-sm flex items-center gap-4"
               >
                 <img
-                  src={item.image}
+                  src={`${item.image}?t=${Date.now()}`}
                   alt={item.name}
                   className="w-20 h-20 object-cover rounded-xl bg-brand-dark shrink-0"
                 />

@@ -1,10 +1,12 @@
 import { db } from "@/db";
 import { products, categories } from "@/db/schema";
 import { eq } from "drizzle-orm";
+import { unstable_noStore } from "next/cache";
 
 const DEFAULT_IMAGE = "https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=500&q=80";
 
 export async function getPublicMenu() {
+  unstable_noStore();
   const result = await db
     .select({
       id: products.idProducts,

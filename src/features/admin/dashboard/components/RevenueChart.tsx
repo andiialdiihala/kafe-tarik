@@ -17,7 +17,7 @@ export const RevenueChart = ({ data }: { data: { name: string; total: number }[]
         <CartesianGrid strokeDasharray="3 3" stroke="#eee" />
         <XAxis dataKey="name" />
         <YAxis />
-        <Tooltip formatter={(value: any) => [`Rp ${Number(value).toLocaleString()}`, "Pendapatan"]} />
+        <Tooltip formatter={(value: unknown) => [`Rp ${Number(value ?? 0).toLocaleString()}`, "Pendapatan"]} />
         <Area type="monotone" dataKey="total" name="Pendapatan" stroke="#143125" fill="#d6f5d6" />
       </AreaChart>
     </ResponsiveContainer>

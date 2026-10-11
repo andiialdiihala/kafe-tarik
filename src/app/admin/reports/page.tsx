@@ -1,5 +1,5 @@
 import { ReportsView } from "@/features/admin/reports/components/ReportsView";
-import { getReportsData } from "@/features/admin/reports/actions";
+import { getReportsData } from "@/features/admin/reports/queries/report.queries";
 
 export default async function ReportsPage() {
   const data = await getReportsData();

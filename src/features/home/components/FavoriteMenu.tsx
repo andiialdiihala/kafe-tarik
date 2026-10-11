@@ -47,7 +47,7 @@ export const FavoriteMenu = () => {
                 <Link href="/menu" className="group bg-white rounded-xl md:rounded-2xl p-2.5 md:p-3.5 shadow-sm border border-stone-200/80 flex flex-col justify-between hover:shadow-md hover:border-brand-mint transition">
                   <div className="relative w-full aspect-square bg-brand-dark rounded-lg md:rounded-xl overflow-hidden mb-2 md:mb-3 flex items-center justify-center">
                     {i === 0 && <span className="absolute top-2 left-2 z-10 bg-[#2D6A4F] text-white text-[9px] font-bold px-2 py-0.5 rounded-full shadow-sm">👑</span>}
-                    <img alt={item.name} className="w-full h-full object-cover group-hover:scale-105 transition duration-300" src={item.image} />
+                    <img alt={item.name} className="w-full h-full object-cover group-hover:scale-105 transition duration-300" src={`${item.image}?t=${Date.now()}`} />
                   </div>
                   <div>
                     <h3 className="font-display font-semibold text-stone-900 text-sm md:text-base group-hover:text-brand-dark transition">{item.name}</h3>

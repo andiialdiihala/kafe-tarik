@@ -10,7 +10,9 @@ import Link from "next/link";
 
 const DEFAULT_IMAGE = "https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=500&q=80";
 
-export const ProductDetailView = ({ item }: { item: any }) => {
+import { ProductDetailItem } from "../types/menu-detail.types";
+
+export const ProductDetailView = ({ item }: { item: ProductDetailItem }) => {
   const cat = item.category?.toLowerCase() || "";
   const isDrink = cat.includes("kopi") || cat.includes("minuman") || cat.includes("drink");
   const [cupSize, setCupSize] = useState<"Regular" | "Large">("Regular");
@@ -22,8 +24,8 @@ export const ProductDetailView = ({ item }: { item: any }) => {
   const itemPrice = Number(item.price || 0);
   const extraPrice = isDrink && cupSize === "Large" ? 3000 : 0;
   const finalPrice = itemPrice + extraPrice;
-  const imageUrl = item.image || DEFAULT_IMAGE;
-
+  const imageUrl = item.image;
+  
   return (
     <main className="min-h-screen bg-brand-cream py-12">
       <Container>

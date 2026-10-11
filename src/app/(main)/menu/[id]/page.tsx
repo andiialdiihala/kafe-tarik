@@ -1,12 +1,12 @@
 import { notFound } from "next/navigation";
-import { getProductById } from "@/features/menu/actions/menu.actions";
+import { getProductById as getProductDetailById } from "@/features/menu-detail/actions/menu-detail.action";
 import { ProductDetailView } from "@/features/menu-detail/components/ProductDetailView";
 
 export const revalidate = 0;
 
 export default async function ProductDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const item: any = await getProductById(id);
+  const item = await getProductDetailById(id);
 
   if (!item) {
     notFound();
