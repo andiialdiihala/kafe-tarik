@@ -6,10 +6,10 @@ export const AboutSection = () => (
     initial={{ opacity: 0 }}
     whileInView={{ opacity: 1 }}
     viewport={{ once: true }}
-    className="py-24 px-6 max-w-7xl mx-auto" 
+    className="py-14 sm:py-24 px-4 sm:px-6 max-w-7xl mx-auto" 
     id="tentang-kami"
   >
-    <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+    <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 sm:gap-12 items-center">
       <motion.div 
         initial={{ x: -30, opacity: 0 }}
         whileInView={{ x: 0, opacity: 1 }}
@@ -41,9 +41,9 @@ export const AboutSection = () => (
           <img alt="Outlet Kafe Tarik Cabang Sis Al Jufri" className="w-full h-auto object-cover transform hover:scale-105 transition duration-500" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDMk6N6nrhI3kmgA3nHWM_MCjK2EWhPX8ajTaiGDfMc9E3MeMTBIQtGDeeQzqoPRYpNLZA5Iem7cwLmR1MbBtIHE_9Ub_DfbKeG2WN28QNgLlLdZwA_XJvCXB9bihp_6hQI5kNAr6DXis202dL9-_dm0zcNIKB3cAbcI1THlm6rlyNMY7MA-XZQw-_q4OYTiQ8d9DsC0jmqHVExP4ZRAK3hevybcDbsigZu1ec59k1vG90NNi_yhDurHA6vNoSp07Fjp8U" />
           <div className="absolute inset-0 pointer-events-none rounded-3xl" style={{ boxShadow: "rgba(246, 241, 234, 0.2) 0px 0px 35px inset" }}></div>
         </div>
-        <div className="absolute -top-6 -right-3 sm:-top-8 sm:right-4 z-20 bg-brand-dark text-white rounded-full p-4 sm:p-6 shadow-xl border-2 border-brand-mint flex flex-col items-center justify-center text-center transform rotate-6">
-          <span className="font-handwriting text-xl sm:text-2xl text-brand-mint leading-none">Selamat<br />Menikmati!</span>
-          <span className="text-2xl mt-1">☕</span>
+        <div className="absolute -top-4 -right-1 sm:-top-6 sm:-right-3 z-20 bg-brand-dark text-white rounded-full p-3 sm:p-4 shadow-xl border-2 border-brand-mint flex flex-col items-center justify-center text-center transform rotate-6">
+          <span className="font-handwriting text-base sm:text-xl text-brand-mint leading-none">Selamat<br />Menikmati!</span>
+          <span className="text-xl sm:text-2xl mt-1">☕</span>
         </div>
       </motion.div>
     </div>

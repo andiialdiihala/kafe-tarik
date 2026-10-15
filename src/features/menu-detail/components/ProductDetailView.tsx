@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import { motion } from "framer-motion";
 import { useCartStore } from "@/features/cart/store/cart.store";
 import { useToast } from "@/components/ui/Toast";
@@ -13,17 +12,11 @@ const DEFAULT_IMAGE = "https://images.unsplash.com/photo-1509042239860-f550ce710
 import { ProductDetailItem } from "../types/menu-detail.types";
 
 export const ProductDetailView = ({ item }: { item: ProductDetailItem }) => {
-  const cat = item.category?.toLowerCase() || "";
-  const isDrink = cat.includes("kopi") || cat.includes("minuman") || cat.includes("drink");
-  const [cupSize, setCupSize] = useState<"Regular" | "Large">("Regular");
-  
   const addItem = useCartStore((state) => state.addItem);
   const clearCart = useCartStore((state) => state.clearCart);
   const { showToast } = useToast();
 
-  const itemPrice = Number(item.price || 0);
-  const extraPrice = isDrink && cupSize === "Large" ? 3000 : 0;
-  const finalPrice = itemPrice + extraPrice;
+  const finalPrice = Number(item.price || 0);
   const imageUrl = item.image;
   
   return (
@@ -59,39 +52,6 @@ export const ProductDetailView = ({ item }: { item: ProductDetailItem }) => {
             </span>
             <h1 className="font-display text-4xl sm:text-5xl font-bold text-brand-dark">{item.name}</h1>
             <p className="text-stone-600 text-lg leading-relaxed">{item.description || "Tidak ada deskripsi."}</p>
-            
-            {/* Opsi Pilihan Cup Size untuk Minuman */}
-            {isDrink && (
-              <div className="space-y-2 pt-2">
-                <label className="text-sm font-bold text-stone-800">Pilih Ukuran Cup:</label>
-                <div className="flex gap-3">
-                  <button
-                    type="button"
-                    onClick={() => setCupSize("Regular")}
-                    className={`flex-1 py-3 px-4 rounded-xl border font-semibold text-sm transition flex justify-between items-center ${
-                      cupSize === "Regular"
-                        ? "bg-brand-dark text-white border-brand-dark shadow-md"
-                        : "bg-white text-stone-700 border-stone-200 hover:border-brand-dark"
-                    }`}
-                  >
-                    <span>Regular</span>
-                    <span className="text-xs opacity-80">Standar</span>
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setCupSize("Large")}
-                    className={`flex-1 py-3 px-4 rounded-xl border font-semibold text-sm transition flex justify-between items-center ${
-                      cupSize === "Large"
-                        ? "bg-brand-dark text-white border-brand-dark shadow-md"
-                        : "bg-white text-stone-700 border-stone-200 hover:border-brand-dark"
-                    }`}
-                  >
-                    <span>Large</span>
-                    <span className="text-xs opacity-80">+Rp 3.000</span>
-                  </button>
-                </div>
-              </div>
-            )}
 
             <div className="text-3xl font-bold text-brand-darker pt-2">
               Rp {finalPrice.toLocaleString("id-ID")}
@@ -102,7 +62,6 @@ export const ProductDetailView = ({ item }: { item: ProductDetailItem }) => {
                 onClick={() => {
                   const finalItem = {
                     ...item,
-                    name: isDrink ? `${item.name} (${cupSize})` : item.name,
                     price: finalPrice,
                   };
                   addItem(finalItem);
@@ -118,7 +77,6 @@ export const ProductDetailView = ({ item }: { item: ProductDetailItem }) => {
                 onClick={() => {
                   const finalItem = {
                     ...item,
-                    name: isDrink ? `${item.name} (${cupSize})` : item.name,
                     price: finalPrice,
                   };
                   clearCart();

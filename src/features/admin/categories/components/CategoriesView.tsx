@@ -74,12 +74,11 @@ export const CategoriesView = ({ initialCategories = [] }: { initialCategories?:
     }
   };
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>, isEdit = false) => {
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
       const url = URL.createObjectURL(file);
-      if (isEdit) setEditPreview(url);
-      else setAddPreview(url);
+      setPreviewUrl(url);
     }
   };
 
@@ -92,7 +91,7 @@ export const CategoriesView = ({ initialCategories = [] }: { initialCategories?:
         </div>
         <button
           onClick={() => {
-            setAddPreview(null);
+            setPreviewUrl(null);
             setIsOpen(true);
           }}
           className="bg-[#143125] text-white flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold hover:bg-emerald-900 transition-colors shadow-sm"
@@ -237,7 +236,7 @@ export const CategoriesView = ({ initialCategories = [] }: { initialCategories?:
                     </td>
                     <td className="py-3 px-4 text-right">
                       <div className="flex items-center justify-end gap-2">
-                        <button onClick={() => { setEditPreview(null); setEditingItem(c); }} className="p-1.5 text-stone-500 hover:text-emerald-700 transition"><Edit2 className="w-3.5 h-3.5" /></button>
+                        <button onClick={() => { setPreviewUrl(null); setEditingItem(c); }} className="p-1.5 text-stone-500 hover:text-emerald-700 transition"><Edit2 className="w-3.5 h-3.5" /></button>
                         <button onClick={() => setDeletingId(c.id)} className="p-1.5 text-stone-500 hover:text-rose-600 transition"><Trash2 className="w-3.5 h-3.5" /></button>
                       </div>
                     </td>
